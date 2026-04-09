@@ -1,0 +1,22 @@
+# Virtual environment
+venv/
+
+# PyInstaller output
+dist/
+build/
+*.spec
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+utils/
+build.bat
+
+# VS Code settings
+.vscode/
+
+# OS clutter
+.DS_Store
+Thumbs.db
