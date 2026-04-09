@@ -1,0 +1,47 @@
+name: Build & Release GameBot
+
+on:
+  push:
+    tags:
+      - "v*" # triggers only on version tags like v1.0.0, v1.2.3
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build .exe with PyInstaller
+        run: |
+          pyinstaller --onefile --windowed --name "GameBot" --add-data "states;states" app.py
+
+      - name: Upload release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "GameBot ${{ github.ref_name }}"
+          body: |
+            ## GameBot ${{ github.ref_name }}
+
+            ### Installation
+            1. Download `GameBot.exe` below
+            2. Place it in a folder alongside your `states/` images
+            3. Run `GameBot.exe`
+
+            ### What's changed
+            _Add your release notes here or use the auto-generate button on GitHub._
+          files: dist/GameBot.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
