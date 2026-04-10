@@ -8,53 +8,53 @@ INITIAL_CLICKS = [
     {"name": "Click 1st Grid", "x": 700, "y": 450},
 ]
 
-BACK_BUTTON = {"name": "Back Button", "image": "states/skip_episodes/buttons/back_btn.png"}
+BACK_BUTTON = {"name": "Back Button", "image": "images/buttons/back_btn.png"}
 
 PLAY_NORMAL_SEQUENCE = [
-    {"name": "Normal Play Button", "image": "states/skip_episodes/buttons/play_btn.png"},
+    {"name": "Normal Play Button", "image": "images/buttons/play_btn.png"},
 ]
 
 PLAY_INTIM_SEQUENCE = [
-    {"name": "Intim Play Button", "image": "states/skip_episodes/buttons/intim_ep_unlocked_btn.png"},
+    {"name": "Intim Play Button", "image": "images/buttons/intim_ep_unlocked_btn.png"},
 ]
 
 POST_NORMAL_SEQUENCE = [
-    {"name": "Skip Button",       "image": "states/skip_episodes/buttons/skip_btn.png"},
-    {"name": "Skip Story Button", "image": "states/skip_episodes/buttons/skip_story_btn.png"},
-    {"name": "Episode",           "image": "states/skip_episodes/buttons/episodes_btn.png"},
-    {"name": "Ok Button",         "image": "states/skip_episodes/buttons/ok_btn.png"},
+    {"name": "Skip Button",       "image": "images/buttons/skip_btn.png"},
+    {"name": "Skip Story Button", "image": "images/buttons/skip_story_btn.png"},
+    {"name": "Episode",           "image": "images/buttons/episodes_btn.png"},
+    {"name": "Ok Button",         "image": "images/buttons/ok_btn.png"},
 ]
 
 POST_INTIM_SEQUENCE = [
-    {"name": "Skip Button",       "image": "states/skip_episodes/buttons/skip_btn.png"},
-    {"name": "Skip Story Button", "image": "states/skip_episodes/buttons/skip_story_btn.png"},
-    {"name": "Intim Skip Button", "image": "states/skip_episodes/buttons/intim_skip_btn.png"},
-    {"name": "Intim Skip Story",  "image": "states/skip_episodes/buttons/ok_btn.png"},
-    {"name": "Episode",           "image": "states/skip_episodes/buttons/episodes_btn.png"},
-    {"name": "Ok Button",         "image": "states/skip_episodes/buttons/ok_btn.png"},
+    {"name": "Skip Button",       "image": "images/buttons/skip_btn.png"},
+    {"name": "Skip Story Button", "image": "images/buttons/skip_story_btn.png"},
+    {"name": "Intim Skip Button", "image": "images/buttons/intim_skip_btn.png"},
+    {"name": "Intim Skip Story",  "image": "images/buttons/ok_btn.png"},
+    {"name": "Episode",           "image": "images/buttons/episodes_btn.png"},
+    {"name": "Ok Button",         "image": "images/buttons/ok_btn.png"},
 ]
 
-CHECK_NORMAL_EP_FINISHED  = "states/skip_episodes/icons/normal_ep_finished_icon.png"
-CHECK_INTIM_EP_UNLOCKED   = "states/skip_episodes/buttons/intim_ep_unlocked_btn.png"
-CHECK_INTIM_EP_UNFINISHED = "states/skip_episodes/icons/intim_ep_unlocked_icon.png"
-CHECK_BLANK_LIST          = "states/skip_episodes/icons/blank_list.png"
+CHECK_NORMAL_EP_FINISHED  = "images/icons/normal_ep_finished_icon.png"
+CHECK_INTIM_EP_UNLOCKED   = "images/buttons/intim_ep_unlocked_btn.png"
+CHECK_INTIM_EP_UNFINISHED = "images/icons/intim_ep_unlocked_icon.png"
+CHECK_BLANK_LIST          = "images/icons/blank_list.png"
 
 INTIM_EPISODES = [
     {
         "name": "Intim EP 1",
         "index": 0,
-        "check_unlocked":   "states/skip_episodes/buttons/intim_ep_unlocked_btn.png",
-        "check_unfinished": "states/skip_episodes/icons/intim_ep_unlocked_icon.png",
-        "check_finished":   "states/skip_episodes/icons/intim_ep_finished_icon.png",
-        "play_button":      "states/skip_episodes/buttons/intim_ep_unlocked_btn.png",
+        "check_unlocked":   "images/buttons/intim_ep_unlocked_btn.png",
+        "check_unfinished": "images/icons/intim_ep_unlocked_icon.png",
+        "check_finished":   "images/icons/intim_ep_finished_icon.png",
+        "play_button":      "images/buttons/intim_ep_unlocked_btn.png",
     },
     {
         "name": "Intim EP 2",
         "index": 1,
-        "check_unlocked":   "states/skip_episodes/buttons/intim_ep_unlocked_btn.png",
-        "check_unfinished": "states/skip_episodes/icons/intim_ep_2_unlocked_icon.png",
-        "check_finished":   "states/skip_episodes/icons/intim_ep_2_finished_icon.png",
-        "play_button":      "states/skip_episodes/buttons/intim_ep_unlocked_btn.png",
+        "check_unlocked":   "images/buttons/intim_ep_unlocked_btn.png",
+        "check_unfinished": "images/icons/intim_ep_2_unlocked_icon.png",
+        "check_finished":   "images/icons/intim_ep_2_finished_icon.png",
+        "play_button":      "images/buttons/intim_ep_unlocked_btn.png",
     },
 ]
 # --- Helpers ---

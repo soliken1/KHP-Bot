@@ -30,9 +30,9 @@ jobs:
       - name: Build .exe with PyInstaller
         run: |
           pyinstaller --onefile --windowed --name "KHPBot" `
-            --icon "icon.ico" `
-            --add-data "states;states" `
+            --icon "assets/icon.ico" `
             --add-data "features;features" `
+            --add-data "config;config" `
             app.py
 
       - name: Upload release
