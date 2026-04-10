@@ -42,7 +42,7 @@ def start_bot():
 
 def run_bot():
     try:
-        main.run(stop_event)  # pass stop_event so main.py can check it
+        main.run(stop_event)  
     except Exception as e:
         print(f"  ✘ Bot error: {e}")
     finally:
