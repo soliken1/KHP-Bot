@@ -3,7 +3,10 @@ name: Build & Release GameBot
 on:
   push:
     tags:
-      - "v*" # triggers only on version tags like v1.0.0, v1.2.3
+      - "v*"
+
+permissions: # ← add this block
+  contents: write # ← required to create releases
 
 jobs:
   build:
