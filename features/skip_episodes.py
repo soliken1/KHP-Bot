@@ -8,61 +8,55 @@ INITIAL_CLICKS = [
     {"name": "Click 1st Grid", "x": 700, "y": 450},
 ]
 
-BACK_BUTTON = {"name": "Back Button", "image": "states/buttons/back_btn.png"}
+BACK_BUTTON = {"name": "Back Button", "image": "states/skip_episodes/buttons/back_btn.png"}
 
-# Separated play sequences per episode type
 PLAY_NORMAL_SEQUENCE = [
-    {"name": "Normal Play Button", "image": "states/buttons/play_btn.png"},
+    {"name": "Normal Play Button", "image": "states/skip_episodes/buttons/play_btn.png"},
 ]
 
 PLAY_INTIM_SEQUENCE = [
-    {"name": "Intim Play Button", "image": "states/buttons/intim_ep_unlocked_btn.png"},
+    {"name": "Intim Play Button", "image": "states/skip_episodes/buttons/intim_ep_unlocked_btn.png"},
 ]
 
-# Normal post sequence
 POST_NORMAL_SEQUENCE = [
-    {"name": "Skip Button",       "image": "states/buttons/skip_btn.png"},
-    {"name": "Skip Story Button", "image": "states/buttons/skip_story_btn.png"},
-    {"name": "Episode",           "image": "states/buttons/episodes_btn.png"},
-    {"name": "Ok Button",         "image": "states/buttons/ok_btn.png"},
+    {"name": "Skip Button",       "image": "states/skip_episodes/buttons/skip_btn.png"},
+    {"name": "Skip Story Button", "image": "states/skip_episodes/buttons/skip_story_btn.png"},
+    {"name": "Episode",           "image": "states/skip_episodes/buttons/episodes_btn.png"},
+    {"name": "Ok Button",         "image": "states/skip_episodes/buttons/ok_btn.png"},
 ]
 
-# Intim post sequence — modify these to your actual intim buttons
 POST_INTIM_SEQUENCE = [
-    {"name": "Skip Button",             "image": "states/buttons/skip_btn.png"},
-    {"name": "Skip Story Button",       "image": "states/buttons/skip_story_btn.png"},
-    {"name": "Intim Skip Button",       "image": "states/buttons/intim_skip_btn.png"},
-    {"name": "Intim Skip Story",        "image": "states/buttons/ok_btn.png"},
-    {"name": "Episode",                 "image": "states/buttons/episodes_btn.png"},
-    {"name": "Ok Button",               "image": "states/buttons/ok_btn.png"},
+    {"name": "Skip Button",       "image": "states/skip_episodes/buttons/skip_btn.png"},
+    {"name": "Skip Story Button", "image": "states/skip_episodes/buttons/skip_story_btn.png"},
+    {"name": "Intim Skip Button", "image": "states/skip_episodes/buttons/intim_skip_btn.png"},
+    {"name": "Intim Skip Story",  "image": "states/skip_episodes/buttons/ok_btn.png"},
+    {"name": "Episode",           "image": "states/skip_episodes/buttons/episodes_btn.png"},
+    {"name": "Ok Button",         "image": "states/skip_episodes/buttons/ok_btn.png"},
 ]
 
-# Each intim episode has its own unlocked and unfinished check images
+CHECK_NORMAL_EP_FINISHED  = "states/skip_episodes/icons/normal_ep_finished_icon.png"
+CHECK_INTIM_EP_UNLOCKED   = "states/skip_episodes/buttons/intim_ep_unlocked_btn.png"
+CHECK_INTIM_EP_UNFINISHED = "states/skip_episodes/icons/intim_ep_unlocked_icon.png"
+CHECK_BLANK_LIST          = "states/skip_episodes/icons/blank_list.png"
+
 INTIM_EPISODES = [
     {
         "name": "Intim EP 1",
-        "index": 0,   
-        "check_unlocked":   "states/buttons/intim_ep_unlocked_btn.png",
-        "check_unfinished": "states/icons/intim_ep_unlocked_icon.png",
-        "check_finished":   "states/icons/intim_ep_finished_icon.png",
-        "play_button":      "states/buttons/intim_ep_unlocked_btn.png",
+        "index": 0,
+        "check_unlocked":   "states/skip_episodes/buttons/intim_ep_unlocked_btn.png",
+        "check_unfinished": "states/skip_episodes/icons/intim_ep_unlocked_icon.png",
+        "check_finished":   "states/skip_episodes/icons/intim_ep_finished_icon.png",
+        "play_button":      "states/skip_episodes/buttons/intim_ep_unlocked_btn.png",
     },
     {
         "name": "Intim EP 2",
-        "index": 1,   
-        "check_unlocked":   "states/buttons/intim_ep_unlocked_btn.png",
-        "check_unfinished": "states/icons/intim_ep_2_unlocked_icon.png",
-        "check_finished":   "states/icons/intim_ep_2_finished_icon.png",
-        "play_button":      "states/buttons/intim_ep_unlocked_btn.png",
+        "index": 1,
+        "check_unlocked":   "states/skip_episodes/buttons/intim_ep_unlocked_btn.png",
+        "check_unfinished": "states/skip_episodes/icons/intim_ep_2_unlocked_icon.png",
+        "check_finished":   "states/skip_episodes/icons/intim_ep_2_finished_icon.png",
+        "play_button":      "states/skip_episodes/buttons/intim_ep_unlocked_btn.png",
     },
 ]
-
-CHECK_NORMAL_EP_FINISHED = "states/icons/normal_ep_finished_icon.png"
-CHECK_INTIM_EP_UNLOCKED  = "states/buttons/intim_ep_unlocked_btn.png"
-CHECK_INTIM_EP_UNFINISHED = "states/icons/intim_ep_unlocked_icon.png"
-CHECK_INTIM_EP_FINISHED  = "states/buttons/intim_ep_finished_btn.png"
-CHECK_BLANK_LIST = "states/icons/blank_list.png"
-
 # --- Helpers ---
 
 def do_initial_clicks():
@@ -147,7 +141,7 @@ def run(stop_event=None):
         if stop_event and stop_event.is_set():
             print("  → Bot stopped.")
             break
-        
+
         cycle += 1
         print(f"\n{'='*30}")
         print(f"  Cycle {cycle}  |  Retry {retries}/{MAX_RETRIES}")

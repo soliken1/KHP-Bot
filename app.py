@@ -1,11 +1,10 @@
 import threading
 import tkinter as tk
-from tkinter import scrolledtext, ttk
+from tkinter import scrolledtext
 import sys
 import io
-import main  # your existing main.py
+from features import FEATURES
 
-# --- Redirect print() to the UI log ---
 class LogRedirector(io.TextIOBase):
     def __init__(self, widget):
         self.widget = widget
@@ -18,31 +17,33 @@ class LogRedirector(io.TextIOBase):
             self.widget.configure(state="disabled")
         return len(text)
 
-# --- Bot thread control ---
 bot_thread = None
 stop_event = threading.Event()
 
 def start_bot():
     global bot_thread, stop_event
 
-    # Push config values into main's config
     import config
     config.SCAN_TIMEOUT = int(timeout_var.get())
     config.MAX_RETRIES  = int(retries_var.get())
     config.CLICK_DELAY  = float(delay_var.get())
 
+    # Get selected feature's run() function
+    selected = feature_var.get()
+    run_fn = FEATURES[selected]
+
     stop_event.clear()
     btn_start.config(state="disabled")
     btn_stop.config(state="normal")
-    status_var.set("Running")
+    status_var.set(f"Running — {selected}")
     status_label.config(fg="#1D9E75")
 
-    bot_thread = threading.Thread(target=run_bot, daemon=True)
+    bot_thread = threading.Thread(target=lambda: run_bot(run_fn), daemon=True)
     bot_thread.start()
 
-def run_bot():
+def run_bot(run_fn):
     try:
-        main.run(stop_event)  
+        run_fn(stop_event)
     except Exception as e:
         print(f"  ✘ Bot error: {e}")
     finally:
@@ -60,11 +61,10 @@ def clear_log():
     log_box.delete("1.0", tk.END)
     log_box.configure(state="disabled")
 
-# --- Build UI ---
 root = tk.Tk()
-root.title("Game Bot")
+root.title("KHPBot")
 root.resizable(False, False)
-root.geometry("420x560")
+root.geometry("420x600")
 
 frame = tk.Frame(root, padx=16, pady=16)
 frame.pack(fill="both", expand=True)
@@ -77,7 +77,15 @@ status_var = tk.StringVar(value="Idle")
 status_label = tk.Label(status_row, textvariable=status_var, font=("Arial", 11, "bold"), fg="#888780")
 status_label.pack(side="left", padx=6)
 
-# Config inputs
+# Feature selector
+sel_frame = tk.LabelFrame(frame, text="Feature", padx=10, pady=8)
+sel_frame.pack(fill="x", pady=(0, 12))
+feature_var = tk.StringVar(value=list(FEATURES.keys())[0])
+feature_menu = tk.OptionMenu(sel_frame, feature_var, *FEATURES.keys())
+feature_menu.config(width=30)
+feature_menu.pack(fill="x")
+
+# Config
 cfg_frame = tk.LabelFrame(frame, text="Config", padx=10, pady=8)
 cfg_frame.pack(fill="x", pady=(0, 12))
 
@@ -91,9 +99,9 @@ def cfg_row(parent, label, var):
     tk.Label(row, text=label, width=18, anchor="w").pack(side="left")
     tk.Entry(row, textvariable=var, width=8).pack(side="left")
 
-cfg_row(cfg_frame, "Scan timeout (s)",  timeout_var)
-cfg_row(cfg_frame, "Max retries",        retries_var)
-cfg_row(cfg_frame, "Click delay (s)",    delay_var)
+cfg_row(cfg_frame, "Scan timeout (s)", timeout_var)
+cfg_row(cfg_frame, "Max retries",      retries_var)
+cfg_row(cfg_frame, "Click delay (s)",  delay_var)
 
 # Buttons
 btn_frame = tk.Frame(frame)
@@ -110,7 +118,5 @@ log_box = scrolledtext.ScrolledText(log_frame, state="disabled", height=16, font
 log_box.pack(fill="both", expand=True)
 tk.Button(log_frame, text="Clear", command=clear_log).pack(anchor="e", pady=(4, 0))
 
-# Redirect print to log
 sys.stdout = LogRedirector(log_box)
-
 root.mainloop()
