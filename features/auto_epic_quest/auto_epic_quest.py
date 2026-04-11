@@ -239,30 +239,20 @@ _ENTRY_SLOT_INDICES = [1, 2, 3]
 
 
 def _process_entry(slot: int, x: int, y: int, stop_event: threading.Event) -> bool:
-    """
-    For a confirmed-unlocked entry slot:
-      1. Click the entry at its fixed coordinate
-      2. Wait for and click the shop button
-      3. Run shop flow (empty check + buy loop + back x2)
-    Returns True when done, False if stopped.
-    """
     logger.info(f"[epic_quest] Processing entry slot {slot} at ({x}, {y})...")
 
-    # Step 1 — click the entry row by coordinate
     qs.click_coords(x, y)
     _sleep(0.5, stop_event)
     if stop_event.is_set(): return False
 
-    # Step 2 — click the shop button (same image for all entries)
     if not qs.wait_and_click("entry_shop_btn", timeout=8.0):
         logger.warning(f"[epic_quest] Shop button not found for slot {slot}. Backing out.")
-        qs.click("entry_back_btn")
+        qs.click("entry_back_btn")  # back to entry list from entry detail
         return not stop_event.is_set()
 
     if stop_event.is_set(): return False
 
-    # Step 3 — shop flow handles the rest
-    return run_shop_flow(stop_event)
+    return run_shop_flow(stop_event)  # shop flow handles both backs on exit
 
 
 def _run_entry_loop(stop_event: threading.Event):
@@ -322,24 +312,22 @@ def run(stop_event: threading.Event):
     logger.info("[epic_quest] ════ Auto Epic Quest started ════")
     print("  → Auto Epic Quest started")
 
-    # Diagnostic — show what IS found on screen right now
-    for key in ["epic_quests_btn", "entry_down_btn", "entry_locked"]:
-        result = qs.find(key)
-        print(f"  → find('{key}') = {result}")
-
     if not _is_on_entry_list():
-        print("  ✘ Not on entry list screen. Please navigate to the Epic Quest entry list first.")
+        print("  ✘ Not on entry list screen.")
         logger.error("[epic_quest] Entry list screen not detected. Aborting.")
         return
 
     print("  → Entry list detected.")
 
+    # Phase 1 — process all entry shops
     _run_entry_loop(stop_event)
 
     if stop_event.is_set():
         print("  → Stopped during entry loop.")
         return
 
+    # Phase 2 — always runs after entry loop completes
+    print("  → Entry loop done. Proceeding to quest loop...")
     _run_quest_loop(stop_event)
 
     if stop_event.is_set():

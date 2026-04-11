@@ -135,3 +135,19 @@ def get_entry_slot_position(slot: int) -> tuple[int, int]:
             f"please calibrate the coordinates in config.yaml"
         )
     return x, y
+
+def get_combat_max_attempts() -> int:
+    return int(auto_combat_cfg().get("max_attempts", 1))
+
+def get_team_section_position(section: int) -> tuple[int, int]:
+    positions = auto_combat_cfg().get("team_section_positions", {})
+    entry = positions.get(section)
+    if not entry:
+        raise ValueError(f"team_section_positions[{section}] is not defined in config.yaml")
+    x, y = int(entry["x"]), int(entry["y"])
+    if x == 0 and y == 0:
+        raise ValueError(
+            f"team_section_positions[{section}] is still at (0, 0) — "
+            f"please calibrate the coordinates in config.yaml"
+        )
+    return x, y
