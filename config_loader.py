@@ -151,3 +151,9 @@ def get_team_section_position(section: int) -> tuple[int, int]:
             f"please calibrate the coordinates in config.yaml"
         )
     return x, y
+
+def get_energy_regen_positions() -> tuple[tuple[int, int], tuple[int, int]]:
+    cfg = auto_combat_cfg().get("energy_regen", {})
+    t1 = cfg.get("tap_1", {})
+    t2 = cfg.get("tap_2", {})
+    return (int(t1.get("x", 0)), int(t1.get("y", 0))), (int(t2.get("x", 0)), int(t2.get("y", 0)))

@@ -27,7 +27,8 @@ from config_loader import (
     get_combat_max_retries,
     get_combat_wait,
     get_team_section_position,
-    get_combat_max_attempts
+    get_combat_max_attempts,
+    get_energy_regen_positions
 )
 
 logger = logging.getLogger(__name__)
@@ -43,11 +44,13 @@ _DIR = _get_base_dir()
 IMAGES = {
     "support_btn":        os.path.join(_DIR, "images", "icon/{slot}_element_icon.png"),
     "click_support":      os.path.join(_DIR, "images", "icon/my_support_icon.png"),
-    
+    "not_enough_ap":      os.path.join(_DIR, "images", "icon/not_enough_ap_icon.png"),
+
     "start_combat":       os.path.join(_DIR, "images", "button/go_to_quest_btn.png"),
     "start_attack":       os.path.join(_DIR, "images", "button/attack_btn.png"),
     "next_btn":           os.path.join(_DIR, "images", "button/next_btn.png"),
     "retry_btn":          os.path.join(_DIR, "images", "button/retry_btn.png"),
+    "use_btn":             os.path.join(_DIR, "images", "button/use_btn.png"),
     "ok_btn":             os.path.join(_DIR, "images", "button/ok_btn.png"),
 }
 
@@ -124,6 +127,41 @@ def _wait_for_combat_result(stop_event: threading.Event, timeout: float = 300.0)
 
     logger.warning("[auto_combat] Timed out waiting for combat result.")
     return CombatResult.TIMEOUT
+
+def _handle_energy_regen(stop_event: threading.Event) -> bool:
+    """
+    If not_enough_ap icon is visible after clicking retry:
+      tap_1 → tap_2 → ok_btn → back to support screen.
+    Returns True if regen was performed, False if AP was fine.
+    """
+    if _find("not_enough_ap") is None:
+        return False
+
+    logger.info("[auto_combat] Not enough AP — attempting energy regen...")
+    print("  ⚡ AP depleted — regenerating energy...")
+
+    (x1, y1), (x2, y2) = get_energy_regen_positions()
+
+    if x1 == 0 and y1 == 0:
+        logger.warning("[auto_combat] energy_regen.tap_1 not calibrated in config.yaml.")
+        return False
+
+    pyautogui.click(x1, y1)
+    time.sleep(0.5)
+    if stop_event.is_set(): return False
+
+    pyautogui.click(x2, y2)
+    time.sleep(0.5)
+    if stop_event.is_set(): return False
+
+    _click("use_btn")
+    time.sleep(1.5)
+
+    _click("ok_btn")
+    time.sleep(0.5)
+
+    print("  ✔ Energy regenerated — resuming combat.")
+    return True
 
 # ── Main entry point ───────────────────────────────────────────────────────
 
@@ -214,29 +252,33 @@ def run_combat(max_retries: int = None, stop_event: threading.Event = None) -> C
 
        # 6. Dismiss result and click retry to loop back to support screen
         if status == CombatResult.SUCCESS:
-            _click("next_btn")   # advance past win screen to retry_btn
+            _click("next_btn")
             time.sleep(1.5)
-            _click("ok_btn")     # optional first-clear reward — skipped if not found
+            _click("ok_btn")
             time.sleep(0.5)
-            _click("retry_btn")  # back to support screen for next attempt or exit
+            _click("retry_btn")
             time.sleep(1.0)
+            _handle_energy_regen(stop_event)  # ← regen if next run would be AP-blocked
             return CombatResult(CombatResult.SUCCESS, attempts)
 
         if status == CombatResult.TIMEOUT:
             logger.warning("[auto_combat] Timed out waiting for combat result.")
             return CombatResult(CombatResult.TIMEOUT, attempts)
 
-        # FAILURE — click retry_btn to return to support selection screen, then loop
+       # FAILURE — click retry_btn, check AP, then loop
         if attempt <= max_retries:
             logger.info(f"[auto_combat] Failed. Clicking retry ({attempt}/{max_retries})...")
             if not _click("retry_btn"):
                 logger.warning("[auto_combat] Could not click retry_btn — aborting retries.")
                 return CombatResult(CombatResult.FAILURE, attempts)
             time.sleep(1.0)
+            _handle_energy_regen(stop_event)  # ← regen if AP depleted
+            if stop_event.is_set(): return CombatResult(CombatResult.FAILURE, attempts)
         else:
             logger.info("[auto_combat] Max retries reached.")
-            _click("retry_btn")  # still need to exit the result screen cleanly
+            _click("retry_btn")
             time.sleep(1.0)
+            _handle_energy_regen(stop_event)  # ← still check on final exit
 
     return CombatResult(CombatResult.FAILURE, attempts)
 
