@@ -58,6 +58,13 @@ auto_combat:
   max_attempts: 10
   combat_wait: 5.0
 
+  # Energy regen — coordinates to click when AP is depleted
+  # tap_1: first button to open regen dialog
+  # tap_2: second button to confirm regen
+  energy_regen:
+    tap_1: { x: 1065, y: 560 }
+    tap_2: { x: 990, y: 715 }
+
 # ─────────────────────────────────────────────
 # AUTO EPIC QUEST
 # ─────────────────────────────────────────────
