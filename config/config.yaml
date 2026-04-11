@@ -17,33 +17,45 @@ auto_combat:
   # Support selection — image-matched, 7 element buttons.
   # Set to the element name, or 0 to skip entirely.
   # Options: fire, water, wind, thunder, light, dark, phantom
-  support_slot: fire
+  support_slot: 2
 
   # Team selection — two-layer picker:
-  #   team_section : which of the 7 section buttons to click (1–7), image-matched
+  #   team_section : which of the 7 section buttons to click (1–7), coordinate-based
   #   team_slot    : which of the 12 fixed positions to click (1–12), coordinate-based
-  team_section: a
-  team_slot: 1
+  team_section: 2
+  team_slot: 2
+
+  # Fixed screen coordinates for each of the 7 section tab buttons.
+  # [ 1][ 2][ 3][ 4][ 5][ 6][ 7]
+  team_section_positions:
+    1: { x: 775, y: 245 }
+    2: { x: 830, y: 245 }
+    3: { x: 895, y: 245 }
+    4: { x: 950, y: 245 }
+    5: { x: 1010, y: 245 }
+    6: { x: 1065, y: 245 }
+    7: { x: 1130, y: 245 }
 
   # Fixed screen coordinates for each of the 12 team slot positions.
   #   [ 1][ 2][ 3][ 4]
   #   [ 5][ 6][ 7][ 8]
   #   [ 9][10][11][12]
   team_slot_positions:
-    1: { x: 0, y: 0 }
-    2: { x: 0, y: 0 }
-    3: { x: 0, y: 0 }
-    4: { x: 0, y: 0 }
-    5: { x: 0, y: 0 }
-    6: { x: 0, y: 0 }
-    7: { x: 0, y: 0 }
-    8: { x: 0, y: 0 }
-    9: { x: 0, y: 0 }
-    10: { x: 0, y: 0 }
-    11: { x: 0, y: 0 }
-    12: { x: 0, y: 0 }
+    1: { x: 760, y: 300 }
+    2: { x: 795, y: 300 }
+    3: { x: 830, y: 300 }
+    4: { x: 865, y: 300 }
+    5: { x: 900, y: 300 }
+    6: { x: 935, y: 300 }
+    7: { x: 970, y: 300 }
+    8: { x: 1005, y: 300 }
+    9: { x: 1040, y: 300 }
+    10: { x: 1075, y: 300 }
+    11: { x: 1110, y: 300 }
+    12: { x: 1145, y: 300 }
 
   max_retries: 3
+  max_attempts: 10
   combat_wait: 5.0
 
 # ─────────────────────────────────────────────
@@ -68,7 +80,7 @@ auto_epic_quest:
   #   shop_dropdown_last   : fixed position of the bottom item once scrolled to end (>3 items)
   #   rows 1-3 are image-matched directly — no coordinates needed for the ≤3 case
   shop_dropdown_scroll: { x: 1020, y: 533 }
-  shop_dropdown_last:   { x: 925 y: 635 }
+  shop_dropdown_last: { x: 925, y: 635 }
 
   # ── Beginner Raid ──────────────────────────
   beginner_raid:

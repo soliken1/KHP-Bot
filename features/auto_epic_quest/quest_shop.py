@@ -51,11 +51,11 @@ def _is_buy_locked() -> bool:
 
 
 def _do_exit_shop() -> None:
-    """Back × 2 to return from shop to the entry list."""
-    logger.info("[shop] Exiting shop (back × 2)...")
-    qs.click("entry_back_btn")
+    """Back out of shop → back to entry list."""
+    logger.info("[shop] Exiting shop...")
+    qs.click("entry_back_btn")   # shop → entry detail
     time.sleep(0.5)
-    qs.click("entry_back_btn")
+    qs.click("entry_back_btn")   # entry detail → entry list
     time.sleep(0.5)
 
 

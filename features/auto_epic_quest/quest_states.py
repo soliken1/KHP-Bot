@@ -11,12 +11,19 @@ import os
 import time
 import logging
 import pyautogui
+import sys
 
 from config_loader import get_confidence, get_poll_interval
 
 logger = logging.getLogger(__name__)
 
-_DIR = os.path.dirname(__file__)
+def _get_base_dir() -> str:
+    if getattr(sys, 'frozen', False):
+        # PyInstaller extracts to _MEIPASS — features folder is at root level
+        return os.path.join(sys._MEIPASS, "features", "auto_epic_quest")
+    return os.path.dirname(os.path.abspath(__file__))
+
+_DIR = _get_base_dir()
 
 # ── Image asset registry ───────────────────────────────────────────────────
 IMAGES = {
@@ -49,7 +56,7 @@ IMAGES = {
     "shop_ok_btn":          os.path.join(_DIR, "images", "buttons/ok_btn.png"),
 
      # Dropdown — button to open it
-    "shop_dropdown":        os.path.join(_DIR, "images", "buttons/shop_dropdown.png"),
+    "shop_dropdown":        os.path.join(_DIR, "images", "buttons/shop_dropdown_btn.png"),
  
     # Dropdown — scrollbar indicator (visible only when >3 items exist)
     "dropdown_scrollbar":   os.path.join(_DIR, "images", "icons/dropdown_scrollbar.png"),
@@ -133,7 +140,7 @@ def is_standard_raid_available() -> bool:
     return find("standard_raid_icon") is not None
 
 def is_quest_list_visible() -> bool:
-    return find("quest_btn") is not None
+    return find("epic_quests_btn") is not None
 
 def is_entry_locked_at(x: int, y: int, row_height: int = 80, row_width: int = 400) -> bool:
     """
