@@ -49,8 +49,10 @@ IMAGES = {
     "start_combat":       os.path.join(_DIR, "images", "button/go_to_quest_btn.png"),
     "start_attack":       os.path.join(_DIR, "images", "button/attack_btn.png"),
     "next_btn":           os.path.join(_DIR, "images", "button/next_btn.png"),
+    "cancel_btn":         os.path.join(_DIR, "images", "button/cancel_btn.png"),
+    "give_up_btn":          os.path.join(_DIR, "images", "button/give_up_btn.png"),
     "retry_btn":          os.path.join(_DIR, "images", "button/retry_btn.png"),
-    "use_btn":             os.path.join(_DIR, "images", "button/use_btn.png"),
+    "use_btn":            os.path.join(_DIR, "images", "button/use_btn.png"),
     "ok_btn":             os.path.join(_DIR, "images", "button/ok_btn.png"),
 }
 
@@ -115,11 +117,11 @@ def _wait_for_combat_result(stop_event: threading.Event, timeout: float = 300.0)
         if stop_event.is_set():
             return CombatResult.TIMEOUT
 
-        if _find("next_btn"):
+        if _find("retry_btn"):
             logger.info("[auto_combat] next_btn detected — battle won.")
             return CombatResult.SUCCESS
 
-        if _find("retry_btn"):
+        if _find("cancel_btn"):
             logger.info("[auto_combat] retry_btn detected — battle lost.")
             return CombatResult.FAILURE
 
@@ -162,6 +164,12 @@ def _handle_energy_regen(stop_event: threading.Event) -> bool:
 
     print("  ✔ Energy regenerated — resuming combat.")
     return True
+
+def _dismiss_ok_if_present(wait: float = 0.5) -> None:
+    """Click ok_btn if visible — handles level up, first clear, or any reward popup."""
+    if _find("ok_btn"):
+        _click("ok_btn")
+        time.sleep(wait)
 
 # ── Main entry point ───────────────────────────────────────────────────────
 
@@ -254,31 +262,32 @@ def run_combat(max_retries: int = None, stop_event: threading.Event = None) -> C
         if status == CombatResult.SUCCESS:
             _click("next_btn")
             time.sleep(1.5)
-            _click("ok_btn")
-            time.sleep(0.5)
+            _dismiss_ok_if_present()   # first clear, level up, any reward popup
             _click("retry_btn")
             time.sleep(1.0)
-            _handle_energy_regen(stop_event)  # ← regen if next run would be AP-blocked
+            _handle_energy_regen(stop_event)
             return CombatResult(CombatResult.SUCCESS, attempts)
 
         if status == CombatResult.TIMEOUT:
             logger.warning("[auto_combat] Timed out waiting for combat result.")
             return CombatResult(CombatResult.TIMEOUT, attempts)
 
-       # FAILURE — click retry_btn, check AP, then loop
+        # FAILURE — dismiss any popup, click retry, check AP, then loop
         if attempt <= max_retries:
             logger.info(f"[auto_combat] Failed. Clicking retry ({attempt}/{max_retries})...")
+            _dismiss_ok_if_present()   # level up or reward popup on loss too
             if not _click("retry_btn"):
                 logger.warning("[auto_combat] Could not click retry_btn — aborting retries.")
                 return CombatResult(CombatResult.FAILURE, attempts)
             time.sleep(1.0)
-            _handle_energy_regen(stop_event)  # ← regen if AP depleted
+            _handle_energy_regen(stop_event)
             if stop_event.is_set(): return CombatResult(CombatResult.FAILURE, attempts)
         else:
             logger.info("[auto_combat] Max retries reached.")
+            _dismiss_ok_if_present()
             _click("retry_btn")
             time.sleep(1.0)
-            _handle_energy_regen(stop_event)  # ← still check on final exit
+            _handle_energy_regen(stop_event)
 
     return CombatResult(CombatResult.FAILURE, attempts)
 
