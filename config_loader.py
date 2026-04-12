@@ -157,3 +157,10 @@ def get_energy_regen_positions() -> tuple[tuple[int, int], tuple[int, int]]:
     t1 = cfg.get("tap_1", {})
     t2 = cfg.get("tap_2", {})
     return (int(t1.get("x", 0)), int(t1.get("y", 0))), (int(t2.get("x", 0)), int(t2.get("y", 0)))
+
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config", "config.yaml")
+
+def save_config() -> None:
+    """Write current in-memory config back to config.yaml."""
+    with open(CONFIG_PATH, "w") as f:
+        yaml.dump(_config, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
