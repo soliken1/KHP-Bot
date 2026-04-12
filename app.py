@@ -43,6 +43,9 @@ YELLOW      = "#F0B429"
 
 # ── Settings schema ────────────────────────────────────────────────────────
 # (config_path, label, type, min, max, step)
+SUPPORT_OPTIONS = ["0", "1", "2", "3", "4", "5", "6", "7"]
+SUPPORT_LABELS  = ["Skip", "Fire", "Water", "Wind", "Thunder", "Light", "Dark", "Phantom"]
+
 SETTINGS = [
     {
         "section": "GENERAL",
@@ -54,17 +57,27 @@ SETTINGS = [
     {
         "section": "AUTO COMBAT",
         "fields": [
-            ("auto_combat.max_attempts", "Max attempts",      "int",   1,  100, 1),
-            ("auto_combat.max_retries",  "Retries per run",   "int",   0,  10,  1),
-            ("auto_combat.combat_wait",  "Combat buffer (s)", "float", 0.5, 10.0, 0.5),
+            ("auto_combat.max_attempts",  "Max attempts",      "int",   1,  100, 1),
+            ("auto_combat.max_retries",   "Retries per run",   "int",   0,  10,  1),
+            ("auto_combat.combat_wait",   "Combat buffer (s)", "float", 0.5, 10.0, 0.5),
+        ]
+    },
+    {
+        "section": "COMBAT SELECTION",
+        "fields": [
+            ("auto_combat.team_section", "Team section (1–7)",  "int", 1, 7,  1),
+            ("auto_combat.team_slot",    "Team slot (1–12)",    "int", 1, 12, 1),
+        ],
+        "dropdowns": [
+            ("auto_combat.support_slot", "Support element", SUPPORT_OPTIONS, SUPPORT_LABELS),
         ]
     },
     {
         "section": "AUTO EPIC QUEST",
         "fields": [
-            ("auto_epic_quest.max_quest_iterations",        "Max quest iterations",  "int", 1, 50, 1),
-            ("auto_epic_quest.beginner_raid.max_retries",   "Beginner raid retries", "int", 0, 10, 1),
-            ("auto_epic_quest.standard_raid.max_retries",   "Standard raid retries", "int", 0, 10, 1),
+            ("auto_epic_quest.max_quest_iterations",      "Max quest iterations",  "int", 1, 50, 1),
+            ("auto_epic_quest.beginner_raid.max_retries", "Beginner raid retries", "int", 0, 10, 1),
+            ("auto_epic_quest.standard_raid.max_retries", "Standard raid retries", "int", 0, 10, 1),
         ]
     },
 ]
@@ -225,7 +238,7 @@ def _open_settings():
 
         save_config()
         save_lbl_var.set("✔ Saved")
-        settings_win.after(2000, lambda: save_lbl_var.set(""))
+        settings_win.after(800, _close_settings)  
         print("  → Settings saved.")
 
     # ── Footer — packed BEFORE canvas so side="bottom" works ──────────────
@@ -257,20 +270,21 @@ def _open_settings():
     canvas.bind_all("<MouseWheel>", _on_mousewheel)
 
     # ── Build fields ───────────────────────────────────────────────────────
+# Build fields
     cfg = get_config()
     for section_data in SETTINGS:
         tk.Label(body, text=section_data["section"], font=("Consolas", 7),
                  bg=BG, fg=TEXT_MUTED).pack(anchor="w", pady=(14, 4))
         tk.Frame(body, bg=BORDER, height=1).pack(fill="x", pady=(0, 6))
 
-        for path, label, typ, mn, mx, step in section_data["fields"]:
+        # ── Stepper fields ─────────────────────────────────────────────────
+        for path, label, typ, mn, mx, step in section_data.get("fields", []):
             current = _get_nested(cfg, path)
             var = tk.StringVar(value=str(current))
             settings_vars[path] = (var, typ, mn, mx)
 
             row = tk.Frame(body, bg=BG)
             row.pack(fill="x", pady=5)
-
             tk.Label(row, text=label, font=("Consolas", 8),
                      bg=BG, fg=TEXT_DIM, anchor="w").pack(side="left", fill="x", expand=True)
 
@@ -306,6 +320,39 @@ def _open_settings():
             tk.Button(ctrl, text="+", font=("Consolas", 9), bg=BG_CARD, fg=TEXT,
                       bd=0, padx=8, pady=2, cursor="hand2",
                       activebackground=BORDER, command=_make_inc()).pack(side="left")
+
+        # ── Dropdown fields ────────────────────────────────────────────────
+        for path, label, options, option_labels in section_data.get("dropdowns", []):
+            current = str(_get_nested(cfg, path))
+            var = tk.StringVar(value=current)
+            settings_vars[path] = (var, "int", 0, len(options) - 1)
+
+            row = tk.Frame(body, bg=BG)
+            row.pack(fill="x", pady=5)
+            tk.Label(row, text=label, font=("Consolas", 8),
+                     bg=BG, fg=TEXT_DIM, anchor="w").pack(side="left", fill="x", expand=True)
+
+            # Display label (e.g. "Fire") but store value (e.g. "2")
+            display_var = tk.StringVar()
+            idx = options.index(current) if current in options else 0
+            display_var.set(option_labels[idx])
+
+            def _make_option_select(dv, sv, opts, lbls):
+                def on_select(chosen_label):
+                    i = lbls.index(chosen_label)
+                    sv.set(opts[i])
+                    dv.set(chosen_label)
+                return on_select
+
+            om = tk.OptionMenu(row, display_var, *option_labels,
+                               command=_make_option_select(display_var, var, options, option_labels))
+            om.config(font=("Consolas", 8), bg=BG_CARD, fg=TEXT,
+                      activebackground=BG_CARD_SEL, activeforeground=TEXT,
+                      highlightthickness=0, bd=0, width=10, anchor="w",
+                      indicatoron=True, relief="flat")
+            om["menu"].config(font=("Consolas", 8), bg=BG_CARD, fg=TEXT,
+                              activebackground=ACCENT_DIM, activeforeground=TEXT)
+            om.pack(side="right")
 
 def _close_settings():
     global settings_open, settings_win
