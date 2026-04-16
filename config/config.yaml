@@ -22,8 +22,8 @@ auto_combat:
   # Team selection — two-layer picker:
   #   team_section : which of the 7 section buttons to click (1–7), coordinate-based
   #   team_slot    : which of the 12 fixed positions to click (1–12), coordinate-based
-  team_section: 2
-  team_slot: 2
+  team_section: 1
+  team_slot: 1
 
   # Fixed screen coordinates for each of the 7 section tab buttons.
   # [ 1][ 2][ 3][ 4][ 5][ 6][ 7]
@@ -103,3 +103,23 @@ auto_epic_quest:
 
   # ── Quest loop ─────────────────────────────
   max_quest_iterations: 20
+
+# ─────────────────────────────────────────────
+# AUTO MAIN QUEST
+# ─────────────────────────────────────────────
+auto_main_quest:
+  enabled: true
+
+  # Coordinate to click to start/select the next quest
+  initial_click: { x: 925, y: 400 }
+
+  # Maximum number of quest iterations before stopping
+  max_iterations: 20
+
+  # Seconds between combat result polls
+  combat_wait: 5.0
+
+  # Region (x, y, width, height) to check for the "cleared" stamp after each
+  # iteration.  If the stamp is detected here the loop exits immediately even
+  # if max_iterations has not been reached.  Set to null to disable.
+  cleared_check_region: { x: 733, y: 369, width: 82, height: 21 }

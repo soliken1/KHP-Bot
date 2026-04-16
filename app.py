@@ -20,6 +20,10 @@ FEATURE_META = {
         "icon": "⏭",
         "desc": "Auto-skip normal & intimate episodes",
     },
+    "Auto Main Quest": {
+        "icon": "🗡",
+        "desc": "Auto-progress main quest with combat & skip",
+    },
 }
 
 # ── Colors ─────────────────────────────────────────────────────────────────
@@ -78,6 +82,13 @@ SETTINGS = [
             ("auto_epic_quest.max_quest_iterations",      "Max quest iterations",  "int", 1, 50, 1),
             ("auto_epic_quest.beginner_raid.max_retries", "Beginner raid retries", "int", 0, 10, 1),
             ("auto_epic_quest.standard_raid.max_retries", "Standard raid retries", "int", 0, 10, 1),
+        ]
+    },
+    {
+        "section": "AUTO MAIN QUEST",
+        "fields": [
+            ("auto_main_quest.max_iterations",  "Max iterations",     "int",   1,  100, 1),
+            ("auto_main_quest.combat_wait",     "Combat poll (s)",    "float", 1.0, 15.0, 0.5),
         ]
     },
 ]
