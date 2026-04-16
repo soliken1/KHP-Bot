@@ -17,7 +17,7 @@ auto_combat:
   # Support selection — image-matched, 7 element buttons.
   # Set to the element name, or 0 to skip entirely.
   # Options: fire, water, wind, thunder, light, dark, phantom
-  support_slot: 2
+  support_slot: 6
 
   # Team selection — two-layer picker:
   #   team_section : which of the 7 section buttons to click (1–7), coordinate-based

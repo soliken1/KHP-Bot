@@ -326,6 +326,10 @@ def _run_quest_iteration(iteration: int, stop_event: threading.Event) -> bool:
         print(f"  → [{iteration}] No support screen — checking for cutscene...")
         logger.info("[main_quest] No support screen detected.")
 
+        if _wait_and_click("ok_btn", timeout=5.0):
+            logger.info("[main_quest] New quest detected.")
+            _click("ok_btn", retries=1)
+
         # Try skipping cutscene
         _sleep(2.0, stop_event)
         if stop_event.is_set():
