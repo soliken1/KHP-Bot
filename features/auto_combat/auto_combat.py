@@ -46,11 +46,13 @@ IMAGES = {
     "click_support":      os.path.join(_DIR, "images", "icon/my_support_icon.png"),
     "not_enough_ap":      os.path.join(_DIR, "images", "icon/not_enough_ap_icon.png"),
 
+    "auto_off_btn":       os.path.join(_DIR, "images", "button/auto_off_btn.png"),
+    "burst_off_btn":      os.path.join(_DIR, "images", "button/burst_off_btn.png"),
     "start_combat":       os.path.join(_DIR, "images", "button/go_to_quest_btn.png"),
     "start_attack":       os.path.join(_DIR, "images", "button/attack_btn.png"),
     "next_btn":           os.path.join(_DIR, "images", "button/next_btn.png"),
     "cancel_btn":         os.path.join(_DIR, "images", "button/cancel_btn.png"),
-    "give_up_btn":          os.path.join(_DIR, "images", "button/give_up_btn.png"),
+    "give_up_btn":        os.path.join(_DIR, "images", "button/give_up_btn.png"),
     "retry_btn":          os.path.join(_DIR, "images", "button/retry_btn.png"),
     "use_btn":            os.path.join(_DIR, "images", "button/use_btn.png"),
     "ok_btn":             os.path.join(_DIR, "images", "button/ok_btn.png"),
@@ -169,7 +171,11 @@ def _dismiss_ok_if_present(wait: float = 0.5) -> None:
     """Click ok_btn if visible — handles level up, first clear, or any reward popup."""
     if _find("ok_btn"):
         _click("ok_btn")
-        time.sleep(wait)
+    time.sleep(wait)
+
+    if _find("ok_btn"):
+        _click("ok_btn")
+    time.sleep(wait)
 
 # ── Main entry point ───────────────────────────────────────────────────────
 
@@ -241,6 +247,15 @@ def run_combat(max_retries: int = None, stop_event: threading.Event = None) -> C
         # 3. Start combat
         if not _click("start_combat"):
             logger.error("[auto_combat] Could not click Start Combat. Aborting.")
+        time.sleep(2.5)
+
+        # Before attacking, check if auto is off and burst is off and enable them
+        if _find("auto_off_btn"):
+            _click("auto_off_btn")
+        time.sleep(1.5)
+
+        if _find("auto_off_btn"):
+            _click("auto_off_btn")
         time.sleep(1.5)
 
         # Perform Attack
