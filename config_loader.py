@@ -152,6 +152,29 @@ def get_team_section_position(section: int) -> tuple[int, int]:
         )
     return x, y
 
+def auto_main_quest_cfg() -> dict:
+    return get_config().get("auto_main_quest", {})
+
+def get_main_quest_initial_click() -> tuple[int, int]:
+    cfg = auto_main_quest_cfg().get("initial_click", {})
+    return int(cfg.get("x", 700)), int(cfg.get("y", 450))
+
+def get_main_quest_max_iterations() -> int:
+    return int(auto_main_quest_cfg().get("max_iterations", 20))
+
+def get_main_quest_combat_wait() -> float:
+    return float(auto_main_quest_cfg().get("combat_wait", 5.0))
+
+def get_main_quest_cleared_check_region() -> tuple[int, int, int, int] | None:
+    """
+    Returns (x, y, width, height) of the region to scan for the cleared stamp,
+    or None if the check is disabled (key absent or set to null).
+    """
+    cfg = auto_main_quest_cfg().get("cleared_check_region")
+    if not cfg:
+        return None
+    return (int(cfg["x"]), int(cfg["y"]), int(cfg["width"]), int(cfg["height"]))
+
 def get_energy_regen_positions() -> tuple[tuple[int, int], tuple[int, int]]:
     cfg = auto_combat_cfg().get("energy_regen", {})
     t1 = cfg.get("tap_1", {})
