@@ -193,7 +193,6 @@ def run(stop_event=None):
         # Step 4 — Normal done, loop through each intim episode
         print("\n--- Check Intimate Episodes ---")
         any_intim_played = False
-        intim_failed = False
 
         for ep in INTIM_EPISODES:
             print(f"\n  Checking [{ep['name']}]...")
@@ -228,20 +227,10 @@ def run(stop_event=None):
             if not run_steps(POST_INTIM_SEQUENCE):
                 retries += 1
                 print(f"  Post sequence failed. Retry {retries}/{MAX_RETRIES}")
-                intim_failed = True
                 break
 
             any_intim_played = True
             print(f"  ✔ [{ep['name']}] done.")
-
-        # Only go back if intim loop didn't fail mid-way
-        if not intim_failed:
-            print("\n  → Going back...")
-            wait_and_click(BACK_BUTTON)
-            time.sleep(1)
-            retries = 0
-            print(f"\n  ✔ Cycle {cycle} complete. (Intim played: {any_intim_played})")
-            time.sleep(1)
 
         retries = 0
         print(f"\n  ✔ Cycle {cycle} complete. (Intim played: {any_intim_played})")

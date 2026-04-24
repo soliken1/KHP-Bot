@@ -31,6 +31,7 @@ from config_loader import (
     get_main_quest_max_iterations,
     get_main_quest_combat_wait,
     get_main_quest_cleared_check_region,
+    get_energy_regen_positions,
 )
 
 logger = logging.getLogger(__name__)
@@ -61,6 +62,7 @@ IMAGES = {
     "intim_btn":            os.path.join(_DIR, "images", "buttons", "intim_btn.png"),
     "atk_btn":              os.path.join(_DIR, "images", "buttons", "atk_btn.png"),
     "ok_btn":               os.path.join(_DIR, "images", "buttons", "ok_btn.png"),
+    "use_btn":              os.path.join(_DIR, "images", "buttons", "use_btn.png"),
     "return_to_quests_btn": os.path.join(_DIR, "images", "buttons", "return_to_quests_btn.png"),
     "cleared":              os.path.join(_DIR, "images", "buttons", "cleared.png"),
     "to_world_map_btn":     os.path.join(_DIR, "images", "buttons", "to_world_map_btn.png"),
@@ -69,6 +71,7 @@ IMAGES = {
     "support_screen":       os.path.join(_DIR, "images", "icons", "support_screen.png"),
 
     # ── Shared from auto_combat ──
+    "not_enough_ap":        os.path.join(_COMBAT_DIR, "images", "icon", "not_enough_ap_icon.png"),
     "support_btn":          os.path.join(_COMBAT_DIR, "images", "icon", "{slot}_element_icon.png"),
     "release":              os.path.join(_COMBAT_DIR, "images", "icon", "release.png"),
     "click_support":        os.path.join(_COMBAT_DIR, "images", "icon", "my_support_icon.png"),
@@ -149,6 +152,40 @@ def _is_cleared_in_region() -> bool:
         logger.debug(f"[main_quest] _is_cleared_in_region: {e}")
         return False
 
+def _handle_energy_regen(stop_event: threading.Event) -> bool:
+    """
+    If not_enough_ap icon is visible after clicking retry:
+      tap_1 → tap_2 → ok_btn → back to support screen.
+    Returns True if regen was performed, False if AP was fine.
+    """
+    if _find("not_enough_ap") is None:
+        return False
+
+    logger.info("[auto_combat] Not enough AP — attempting energy regen...")
+    print("  ⚡ AP depleted — regenerating energy...")
+
+    (x1, y1), (x2, y2) = get_energy_regen_positions()
+
+    if x1 == 0 and y1 == 0:
+        logger.warning("[auto_combat] energy_regen.tap_1 not calibrated in config.yaml.")
+        return False
+
+    pyautogui.click(x1, y1)
+    time.sleep(0.5)
+    if stop_event.is_set(): return False
+
+    pyautogui.click(x2, y2)
+    time.sleep(0.5)
+    if stop_event.is_set(): return False
+
+    _click("use_btn")
+    time.sleep(1.5)
+
+    _click("ok_btn")
+    time.sleep(0.5)
+
+    print("  ✔ Energy regenerated — resuming combat.")
+    return True
 
 def _dismiss_ok_if_present(wait: float = 0.5) -> None:
     """Click ok_btn if visible — handles level up, first clear, or any reward popup."""
@@ -231,6 +268,9 @@ def _run_quest_iteration(iteration: int, stop_event: threading.Event) -> bool:
     _sleep(2.0, stop_event)
     if stop_event.is_set():
         return False
+    
+    _handle_energy_regen(stop_event)
+    _sleep(2.0, stop_event)
 
     # Step 2: Check for support screen
     if _find("support_screen"):
